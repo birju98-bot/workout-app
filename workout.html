@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HIIT 45/15 Workout</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #111;
+      color: white;
+      padding: 40px;
+    }
+    button {
+      font-size: 20px;
+      padding: 12px 25px;
+      margin: 10px;
+      background: #00c853;
+      border: none;
+      color: white;
+      border-radius: 10px;
+    }
+    #exercise {
+      font-size: 32px;
+      margin-top: 30px;
+      white-space: pre-line;
+    }
+    #timer {
+      font-size: 60px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🔥 45/15 HIIT Workout</h1>
+
+<button onclick="startWorkout()">START WORKOUT</button>
+<button onclick="playMusic()">🎵 START MUSIC</button>
+
+<div id="exercise"></div>
+<div id="timer"></div>
+
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const exercises = [
+"Jumping Jacks",
+"High Knees",
+"Plank Jacks",
+"V Sit Ups",
+"Side Shuffle",
+"Hold Squat",
+"Mountain Climbers",
+"Crunch (Dumbbell)",
+"Elbow to Knee",
+"Side Plank Left",
+"Side Plank Right",
+"Windmill",
+"Sumo Squat Hold",
+"Burpees",
+"Plank"
+];
+
+let round = 1;
+let index = 0;
+
+function speak(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  speechSynthesis.speak(msg);
+}
+
+function playMusic() {
+  document.getElementById("bgMusic").play();
+}
+
+function startWorkout() {
+  runExercise();
+}
+
+function runExercise() {
+  if (index >= exercises.length) {
+    if (round === 1) {
+      round = 2;
+      index = 0;
+      speak("Round 2 starting");
+      setTimeout(runExercise, 3000);
+      return;
+    } else {
+      document.getElementById("exercise").innerText = "Workout Complete!";
+      speak("Workout complete");
+      return;
+    }
+  }
+
+  let ex = exercises[index];
+  document.getElementById("exercise").innerText = ex;
+  speak(ex + " Go");
+
+  let time = 45;
+  let interval = setInterval(() => {
+    document.getElementById("timer").innerText = time;
+
+    if (time <= 5 && time > 0) {
+      speak(time.toString());
+    }
+
+    time--;
+
+    if (time < 0) {
+      clearInterval(interval);
+      rest();
+    }
+  }, 1000);
+}
+
+function rest() {
+  let nextIndex = index + 1;
+
+  let nextExercise = "";
+  if (nextIndex >= exercises.length) {
+    nextExercise = (round === 1) ? "Round 2 starting" : "Workout complete";
+  } else {
+    nextExercise = exercises[nextIndex];
+  }
+
+  document.getElementById("exercise").innerText = "Rest\nNext: " + nextExercise;
+
+  speak("Rest. Next: " + nextExercise);
+
+  let time = 15;
+  let interval = setInterval(() => {
+    document.getElementById("timer").innerText = time;
+
+    if (time <= 5 && time > 0) {
+      speak(time.toString());
+    }
+
+    time--;
+
+    if (time < 0) {
+      clearInterval(interval);
+      index++;
+      runExercise();
+    }
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
